@@ -267,3 +267,35 @@ while i < N:
     print S
     print W
     print E
+
+    j = 0
+    while j < column-1:
+        k = 0
+        while k < row:
+            if E[j][k] == 1 or W[j+1][k] == 1:
+                E[j][k] = 1
+                W[j+1][k] = 1
+            elif E[j][k] == 0 or W[j+1][k] == 0:
+                E[j][k] = 0
+                W[j+1][k] = 0
+            k = k +1
+        j = j +1
+
+
+    l = 0
+    while l < column:
+        m = 0
+        while m < row-1:
+            if N[l][m] == 1 or S[l][m+1] == 1:
+                N[l][m] = 1
+                S[l][m+1] = 1
+            elif N[l][m] == 0 or S[l][m+1] == 0:
+                N[l][m] = 0
+                S[l][m+1] = 0
+            m = m + 1
+        l = l + 1
+
+    print N
+    print S
+    print W
+    print E    
