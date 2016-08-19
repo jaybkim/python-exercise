@@ -186,21 +186,25 @@ def save_data (path, current_x, current_y, direction, N, S, W, E) :
         if c == "W" :
             if direction == "D":
                 S[current_x][current_y] = 1
+                E[current_x][current_y] = 0
                 current_y = current_y - 1
                 N[current_x][current_y] = 1
             elif direction == "U":
                 N[current_x][current_y] = 1
+                W[current_x][current_y] = 0
                 current_y = current_y + 1
                 S[current_x][current_y] = 1
             elif direction == "L":
                 W[current_x][current_y] = 1
+                S[current_x][current_y] = 0
                 current_x = current_x - 1
                 E[current_x][current_y] = 1
             elif direction == "R":
                 E[current_x][current_y] = 1
+                N[current_x][current_y] = 0
                 current_x = current_x + 1
                 W[current_x][current_y] = 1
-        else :
+        elif c == "R" :
             if direction == "D":
                 S[current_x][current_y] = 0
             elif direction == "U":
@@ -210,6 +214,9 @@ def save_data (path, current_x, current_y, direction, N, S, W, E) :
             elif direction == "R":
                 E[current_x][current_y] = 0
             direction = direction_change(direction, c)
+        elif c == "L":
+            direction = direction_change(direction, c)
+
 
     if direction == "D":
         S[current_x][current_y] = 1
@@ -261,7 +268,7 @@ while i < N:
     elif info[2] == "R" :
         info[2] = "L"
     
-    info = save_data(words[1], info[0], info[1], info[2], N, S, W, E)
+    save_data(words[1], info[0], info[1], info[2], N, S, W, E)
 
     print N
     print S
@@ -295,7 +302,88 @@ while i < N:
             m = m + 1
         l = l + 1
 
+
+    n = 0
+    while n < column:
+        N[n][row-1] = 0
+        S[n][0] = 0
+        n = n + 1
+
+    p = 0
+    while p < row:
+        W[0][p] = 0
+        E[column-1][p] = 0
+        p = p +1
+
+
+    N[start_x][start_y - 1] = 1
+    if info[2] == "U":
+        S[info[0]][info[1]+1] = 1
+    elif info[2] == "D":
+        N[info[0]][info[1]-1] = 1
+    elif info[2] == "L":
+        E[info[0]-1][info[1]] = 1
+    elif info[2] == "R":
+        W[info[0]+1][info[1]] = 1
+    
+
     print N
     print S
     print W
     print E    
+
+
+    result = making_list(column,row)
+
+    q = 0
+    while q < column:
+        r = 0
+        while r < row:
+            if E[q][r] == 0:
+                if W[q][r] == 0:
+                    if S[q][r] == 0:
+                        result[q][r] = 1
+                    else:
+                        if N[q][r] == 0:
+                            result[q][r] = 2
+                        else:
+                            result[q][r] = 3
+                else:
+                    if S[q][r] == 0:
+                        if N[q][r] == 0:
+                            result[q][r] = 4
+                        else:
+                            result[q][r] = 5
+                    else:
+                        if N[q][r] == 0:
+                            result[q][r] = 6
+                        else:
+                            result[q][r] = 7
+            else:
+                if W[q][r] == 0:
+                    if S[q][r] == 0:
+                        if N[q][r] == 0:
+                            result[q][r] = 8
+                        else:
+                            result[q][r] = 9
+                    else:
+                        if N[q][r] == 0:
+                            result[q][r] = "a"
+                        else:
+                            result[q][r] = "b"
+                else:
+                    if S[q][r] == 0:
+                        if N[q][r] == 0:
+                            result[q][r] = "c"
+                        else:
+                            result[q][r] = "d"
+                    else:
+                        if N[q][r] == 0:
+                            result[q][r] = "e"
+                        else:
+                            result[q][r] = "f"
+            r = r + 1
+        q = q + 1
+
+
+    print result
