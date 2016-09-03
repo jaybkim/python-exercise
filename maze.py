@@ -1,6 +1,7 @@
 #!/usr/bin/python -tt
 
 import sys
+import logging
 
 def size(path1, path2) :
 
@@ -126,7 +127,7 @@ def size(path1, path2) :
     start_x = - corner_x
     start_y = - corner_y
 
-    print " min_x = %d , max_x = %d , min_y = %d , max_y = %d " %(min_x, max_x, min_y , max_y)
+    logging.debug(" min_x = %d , max_x = %d , min_y = %d , max_y = %d " %(min_x, max_x, min_y , max_y))
     return (column, row, start_x, start_y)
 
 
@@ -164,10 +165,10 @@ def direction_change (cur_dir, path):
 
 def save_data (path, current_x, current_y, direction, N, S, W, E) :
 
-    print current_x
-    print current_y
-    print N
-    print direction
+    logging.debug(current_x)
+    logging.debug(current_y)
+    logging.debug(N)
+    logging.debug(direction)
 
     if direction == "D":
         current_y = current_y - 1
@@ -186,32 +187,44 @@ def save_data (path, current_x, current_y, direction, N, S, W, E) :
         if c == "W" :
             if direction == "D":
                 S[current_x][current_y] = 1
-                E[current_x][current_y] = 0
+                if E[current_x][current_y] == "U":
+                    E[current_x][current_y] = 0
                 current_y = current_y - 1
                 N[current_x][current_y] = 1
             elif direction == "U":
                 N[current_x][current_y] = 1
-                W[current_x][current_y] = 0
+                if W[current_x][current_y] == "U":
+                    W[current_x][current_y] = 0
                 current_y = current_y + 1
                 S[current_x][current_y] = 1
             elif direction == "L":
                 W[current_x][current_y] = 1
-                S[current_x][current_y] = 0
+                if S[current_x][current_y] == "U":
+                    S[current_x][current_y] = 0
                 current_x = current_x - 1
                 E[current_x][current_y] = 1
             elif direction == "R":
                 E[current_x][current_y] = 1
-                N[current_x][current_y] = 0
+                if N[current_x][current_y] == "U":
+                    N[current_x][current_y] = 0
                 current_x = current_x + 1
                 W[current_x][current_y] = 1
         elif c == "R" :
             if direction == "D":
+                if S[current_x][current_y] == 1:
+                    logging.error("oops! my assumption2 is wrong!")
                 S[current_x][current_y] = 0
             elif direction == "U":
+                if N[current_x][current_y] == 1:
+                    logging.error("oops! my assumption2 is wrong!")
                 N[current_x][current_y] = 0
             elif direction == "L":
+                if W[current_x][current_y] == 1:
+                    logging.error("oops! my assumption2 is wrong!")
                 W[current_x][current_y] = 0
             elif direction == "R":
+                if E[current_x][current_y] == 1:
+                    logging.error("oops! my assumption2 is wrong!")
                 E[current_x][current_y] = 0
             direction = direction_change(direction, c)
         elif c == "L":
@@ -233,11 +246,14 @@ def save_data (path, current_x, current_y, direction, N, S, W, E) :
 
     return [current_x, current_y, direction]
 
-N = input()
+
+#logging.basicConfig(level=logging.DEBUG)
+
+count = input()
 
 i = 0
 
-while i < N:
+while i < count:
     i = i + 1
     line = sys.stdin.readline()
     words = line.split()
@@ -246,7 +262,7 @@ while i < N:
         print "error: invalid input %s" % (line)
 
     maze_size = size(words[0], words[1])
-    print "Case #%d: %d * %d" %(i, maze_size[0] , maze_size[1] )
+    print "Case #%d:" %(i)
 
     start_x = maze_size[2]
     start_y = maze_size[3]
@@ -269,11 +285,6 @@ while i < N:
         info[2] = "L"
     
     save_data(words[1], info[0], info[1], info[2], N, S, W, E)
-
-    print N
-    print S
-    print W
-    print E
 
     j = 0
     while j < column-1:
@@ -327,10 +338,17 @@ while i < N:
         W[info[0]+1][info[1]] = 1
     
 
-    print N
-    print S
-    print W
-    print E    
+    for x in range(column):
+        for y in range(row):
+            if N[x][y] == "U": N[x][y] = 0
+            if S[x][y] == "U": S[x][y] = 0
+            if W[x][y] == "U": W[x][y] = 0
+            if E[x][y] == "U": E[x][y] = 0
+
+    logging.debug(N)
+    logging.debug(S)
+    logging.debug(W)
+    logging.debug(E)
 
 
     result = making_list(column,row)
@@ -386,4 +404,15 @@ while i < N:
         q = q + 1
 
 
-    print result
+    logging.debug(result)
+
+
+    s = row
+    while s > 0 :
+        s = s - 1
+        t = 0
+        while t < column :
+            sys.stdout.write(str(result[t][s]))
+            t = t + 1
+        print ""
+     
